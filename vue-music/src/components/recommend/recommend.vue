@@ -6,7 +6,7 @@
       <slider>
          <div  v-for="item in recommends">
             <a :href="item.linkUrl">
-             <img @load="loadImag" :src="item.picUrl" alt="">
+             <img class="needsclick" @load="loadImag" :src="item.picUrl" alt="">
             </a>
          </div>
       </slider>
@@ -126,8 +126,10 @@
                 .name
                     margin-bottom 10px
                     color $color-text
+                    text-align left
                 .desc
                     color:$color-text-d
+                    text-align left
     .loading-container
         position absolute
         width 100%
