@@ -72,7 +72,6 @@
                   this.$refs.scroll.refresh()
               }
          }
-
       },
      components:{
           Slider,

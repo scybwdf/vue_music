@@ -5,12 +5,21 @@
     </div>
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgstyle" ref="bgImage">
+      <div class="play-wrapper" ref="playwrapper">
+        <div class="play" v-show="songs.length>0">
+          <i class="icon-play"></i>
+          <span class="text">随机播放全部</span>
+        </div>
+      </div>
       <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
     <scroll @scroll="scroll" :listen-scroll="listenScroll" :probe-type="probeType" :data="songs" class="list" ref="list">
       <div class="song-list-wrapper">
-        <song-list :songs="songs"></song-list>
+        <song-list @select="selectItem" :songs="songs"></song-list>
+      </div>
+      <div class="loading-contain" v-show="!songs.length">
+        <loading></loading>
       </div>
     </scroll>
   </div>
@@ -20,7 +29,8 @@
   import Scroll from 'base/scroll/scroll'
   import SongList from 'base/song-list/song-list'
   import {prefixStyle} from "common/js/dom"
-
+  import Loading from "base/loading/loading"
+  import {mapActions} from "vuex"
   const RESOVE_HEIGHT=40
   const transform=prefixStyle('transform')
   console.log(transform)
@@ -61,6 +71,15 @@
           this.$refs.list.$el.style.top=`${this.imageHeight}px`
       },
       methods:{
+        selectItem(item,index){
+          this.selectPlay({
+            list:this.songs,
+            index
+          })
+        },
+        ...mapActions([
+          'selectPlay'
+       ]),
           scroll(pos){
             this.scrollY=pos.y
           },
@@ -90,10 +109,12 @@
               zIndex=10
               this.$refs.bgImage.style.paddingTop=0
               this.$refs.bgImage.style.height=`${RESOVE_HEIGHT}px`
+              this.$refs.playwrapper.style.display="none"
             }
             else{
               this.$refs.bgImage.style.paddingTop='70%'
               this.$refs.bgImage.style.height=0
+              this.$refs.playwrapper.style.display=""
             }
             this.$refs.bgImage.style.zIndex=zIndex
             this.$refs.bgImage.style[transform]=`scale(${scale})`
@@ -101,7 +122,8 @@
       },
       components:{
           Scroll,
-          SongList
+          SongList,
+          Loading
       }
     }
 </script>
@@ -163,4 +185,34 @@
       position: relative
       height: 100%
       background: $color-background
+    .play-wrapper
+      position absolute
+      bottom 20px
+      z-index 50
+      width 100%
+      .play
+        box-sizing border-box
+        width 135px
+        padding 7px 0
+        margin 0 auto
+        text-align center
+        border-radius 100px
+        font-size 0
+        color $color-theme
+        border 1px solid $color-theme
+        .icon-play
+          display inline-block
+          vertical-align middle
+          margin-right 6px
+          font-size: $font-size-medium-x
+        .text
+            display: inline-block
+            vertical-align: middle
+            font-size: $font-size-small
+ .loading-contain
+        position absolute
+        top 50%
+        width 100%
+        transform translateY(-50%)
+
 </style>
